@@ -26,10 +26,15 @@ func testRequest(t *testing.T, url string) {
 			InsecureSkipVerify: true,
 		},
 	}
-	client := &http.Client{Transport: tr}
+	client := &http.Client{
+		Transport: tr,
+		Timeout:   20 * time.Second,
+	}
 
 	resp, err := client.Get(url)
-	assert.NoError(t, err)
+	if !assert.NoError(t, err) {
+		return
+	}
 	defer resp.Body.Close()
 
 	body, ioerr := ioutil.ReadAll(resp.Body)
